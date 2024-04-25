@@ -4,7 +4,7 @@ import { getPlanetEvents, getAssignments } from "./lib/api"
 
 // CONFIGS
 const REFRESH_INTERVAL = 15
-const VERSION = "v1.1.0"
+const VERSION = "v1.2.0"
 
 export const initialState = {
   loading: 1,
@@ -47,6 +47,13 @@ export const className = {
 
 const title_main = css`
   color: #fee801;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+`
+const title_main_normal = css`
+  color: #fff;
   font-size: 12px;
   font-weight: bold;
   text-align: center;
@@ -150,16 +157,24 @@ export const render = ({ loading, planets, order }) => {
         </div>
       ) : (
         <div>
-          {order.title ? (
+          {order.title || planets.length ? (
             <div>
-              <div className={title_main}>
-                <div className={title_top}>{order.title}</div>
-                <div className={title_bottom}>
-                  <div>
-                    {order.current_amount}/{order.max_amount}
-                  </div>
-                  <div>{order.countdown}</div>
+              <div className={order.title ? title_main : title_main_normal}>
+                <div className={title_top}>
+                  {order.title
+                    ? order.title
+                    : planets.length
+                    ? "Campaign Order"
+                    : null}
                 </div>
+                {order.title && (
+                  <div className={title_bottom}>
+                    <div>
+                      {order.current_amount}/{order.max_amount}
+                    </div>
+                    <div>{order.countdown}</div>
+                  </div>
+                )}
               </div>
               {planets.map(planet => {
                 return (
