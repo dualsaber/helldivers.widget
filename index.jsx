@@ -4,7 +4,7 @@ import { getPlanetEvents, getAssignments } from "./lib/api"
 
 // CONFIGS
 const REFRESH_INTERVAL = 15
-const VERSION = "v1.0.0"
+const VERSION = "v1.1.0"
 
 export const initialState = {
   loading: 1,
@@ -110,6 +110,7 @@ const loader = css`
   text-align: center;
   top: 50%;
   left: 50%;
+  width: 100%;
   transform: translate(-50%, -50%);
 `
 
@@ -122,6 +123,12 @@ const loaderText = css`
   color: #fee801;
   font-weight: bold;
 `
+
+const loaderText_small = css`
+  color: #fee801;
+  font-size: 12px;
+`
+
 const version = css`
   color: #fee801;
   font-weight: 100;
@@ -143,50 +150,62 @@ export const render = ({ loading, planets, order }) => {
         </div>
       ) : (
         <div>
-          <div className={title_main}>
-            <div className={title_top}>{order.title}</div>
-            <div className={title_bottom}>
-              <div>
-                {order.current_amount}/{order.max_amount}
+          {order.title ? (
+            <div>
+              <div className={title_main}>
+                <div className={title_top}>{order.title}</div>
+                <div className={title_bottom}>
+                  <div>
+                    {order.current_amount}/{order.max_amount}
+                  </div>
+                  <div>{order.countdown}</div>
+                </div>
               </div>
-              <div>{order.countdown}</div>
+              {planets.map(planet => {
+                return (
+                  <div className={planet_main} key={planet.name}>
+                    <div className={planet_name}>
+                      <div className={planet_name_left}>
+                        {planet.event_faction === 1 && (
+                          <img
+                            height="15"
+                            src="/helldivers.widget/src/images/terminid.png"
+                          />
+                        )}
+                        {planet.event_faction === 2 && (
+                          <img
+                            height="15"
+                            src="/helldivers.widget/src/images/automaton.png"
+                          />
+                        )}
+                        {planet.name}
+                      </div>
+                      <div className={planet_name_right}></div>
+                    </div>
+                    <div className={planet_percentage}>
+                      <div className={planet_percentage_number}>
+                        {planet.percentage}%
+                      </div>
+                      <div
+                        className={planet_percentage_green}
+                        style={{
+                          width: `${planet.percentage}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          </div>
-          {planets.map(planet => {
-            return (
-              <div className={planet_main} key={planet.name}>
-                <div className={planet_name}>
-                  <div className={planet_name_left}>
-                    {planet.event_faction === 1 && (
-                      <img
-                        height="15"
-                        src="/helldivers.widget/src/images/terminid.png"
-                      />
-                    )}
-                    {planet.event_faction === 2 && (
-                      <img
-                        height="15"
-                        src="/helldivers.widget/src/images/automaton.png"
-                      />
-                    )}
-                    {planet.name}
-                  </div>
-                  <div className={planet_name_right}></div>
-                </div>
-                <div className={planet_percentage}>
-                  <div className={planet_percentage_number}>
-                    {planet.percentage}%
-                  </div>
-                  <div
-                    className={planet_percentage_green}
-                    style={{
-                      width: `${planet.percentage}%`
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          })}
+          ) : (
+            <div className={loader}>
+              <img
+                className={loaderImage}
+                src="/helldivers.widget/src/images/logo.png"
+              />
+              <div className={loaderText_small}>Waiting for new orders...</div>
+            </div>
+          )}
         </div>
       )}
     </div>

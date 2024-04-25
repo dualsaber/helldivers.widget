@@ -5,4 +5,3 @@ This is a simple widget for [Übersicht](https://tracesof.net/uebersicht/) that 
 ![Screenshot](screenshot.png)
 
 Uses [Helldivers-2/api](https://github.com/helldivers-2/api) to get the current major order(s) and displays them in a widget.
-
