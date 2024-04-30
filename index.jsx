@@ -4,7 +4,7 @@ import { getPlanetEvents, getAssignments, getAllPlanets } from "./lib/api"
 
 // CONFIGS
 const REFRESH_INTERVAL = 20
-const VERSION = "v1.2.2"
+const VERSION = "v1.2.3"
 
 export const initialState = {
   loading: 1,
@@ -149,6 +149,7 @@ const version = css`
 
 const order_description = css`
   text-align: center;
+  font-size: 14px;
 `
 
 export const render = ({ loading, order, events }) => {
