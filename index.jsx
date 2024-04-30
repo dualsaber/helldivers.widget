@@ -1,28 +1,32 @@
 import { css } from "uebersicht"
 
-import { getPlanetEvents, getAssignments } from "./lib/api"
+import { getPlanetEvents, getAssignments, getAllPlanets } from "./lib/api"
 
 // CONFIGS
-const REFRESH_INTERVAL = 15
+const REFRESH_INTERVAL = 20
 const VERSION = "v1.2.0"
 
 export const initialState = {
   loading: 1,
-  planets: [],
+  events: [],
   order: {}
 }
 
 export const command = async dispatch => {
-  dispatch({ type: "SET_ORDER", data: await getAssignments() })
-  dispatch({ type: "SET_PLANETS", data: await getPlanetEvents() })
+  const planets = await getAllPlanets()
+  dispatch({
+    type: "SET_ORDER",
+    data: await getAssignments(planets)
+  })
+  dispatch({ type: "SET_EVENTS", data: await getPlanetEvents() })
   dispatch({ type: "SET_LOADING", data: 0 })
 }
 
 export const updateState = (event, previousState) => {
   if (event.type === "SET_LOADING") {
     return { ...previousState, loading: event.data }
-  } else if (event.type === "SET_PLANETS") {
-    return { ...previousState, planets: event.data }
+  } else if (event.type === "SET_EVENTS") {
+    return { ...previousState, events: event.data }
   } else if (event.type === "SET_ORDER") {
     return { ...previousState, order: event.data }
   } else {
@@ -143,7 +147,13 @@ const version = css`
   text-align: center;
 `
 
-export const render = ({ loading, planets, order }) => {
+const order_description = css`
+  text-align: center;
+`
+
+export const render = ({ loading, order, events }) => {
+  const planet_list = order.planets || events
+
   return (
     <div className={wrapper}>
       {loading ? (
@@ -157,13 +167,13 @@ export const render = ({ loading, planets, order }) => {
         </div>
       ) : (
         <div>
-          {order.title || planets.length ? (
+          {order.title || planet_list.length ? (
             <div>
               <div className={order.title ? title_main : title_main_normal}>
                 <div className={title_top}>
                   {order.title
                     ? order.title
-                    : planets.length
+                    : events.length
                     ? "Campaign Order"
                     : null}
                 </div>
@@ -176,41 +186,47 @@ export const render = ({ loading, planets, order }) => {
                   </div>
                 )}
               </div>
-              {planets.map(planet => {
-                return (
-                  <div className={planet_main} key={planet.name}>
-                    <div className={planet_name}>
-                      <div className={planet_name_left}>
-                        {planet.event_faction === 1 && (
-                          <img
-                            height="15"
-                            src="/helldivers.widget/src/images/terminid.png"
+              {planet_list.length ? (
+                <div>
+                  {planet_list.map(planet => {
+                    return (
+                      <div className={planet_main} key={planet.name}>
+                        <div className={planet_name}>
+                          <div className={planet_name_left}>
+                            {planet.event_faction === 1 && (
+                              <img
+                                height="15"
+                                src="/helldivers.widget/src/images/terminid.png"
+                              />
+                            )}
+                            {planet.event_faction === 2 && (
+                              <img
+                                height="15"
+                                src="/helldivers.widget/src/images/automaton.png"
+                              />
+                            )}
+                            {planet.name}
+                          </div>
+                          <div className={planet_name_right}></div>
+                        </div>
+                        <div className={planet_percentage}>
+                          <div className={planet_percentage_number}>
+                            {planet.percentage}%
+                          </div>
+                          <div
+                            className={planet_percentage_green}
+                            style={{
+                              width: `${planet.percentage}%`
+                            }}
                           />
-                        )}
-                        {planet.event_faction === 2 && (
-                          <img
-                            height="15"
-                            src="/helldivers.widget/src/images/automaton.png"
-                          />
-                        )}
-                        {planet.name}
+                        </div>
                       </div>
-                      <div className={planet_name_right}></div>
-                    </div>
-                    <div className={planet_percentage}>
-                      <div className={planet_percentage_number}>
-                        {planet.percentage}%
-                      </div>
-                      <div
-                        className={planet_percentage_green}
-                        style={{
-                          width: `${planet.percentage}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className={order_description}>{order.description}</div>
+              )}
             </div>
           ) : (
             <div className={loader}>
