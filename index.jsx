@@ -4,7 +4,7 @@ import { getPlanetEvents, getAssignments, getAllPlanets } from "./lib/api"
 
 // CONFIGS
 const REFRESH_INTERVAL = 20
-const VERSION = "v1.2.1"
+const VERSION = "v1.2.2"
 
 export const initialState = {
   loading: 1,
