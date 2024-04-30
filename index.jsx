@@ -152,7 +152,7 @@ const order_description = css`
 `
 
 export const render = ({ loading, order, events }) => {
-  const planet_list = order.planets || events
+  const planet_list = order.planets.splice(0, 2) || events
 
   return (
     <div className={wrapper}>
